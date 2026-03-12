@@ -14,7 +14,7 @@ const FavoritesBar = ({ favorites, onSelect }: FavoritesBarProps) => {
           key={city}
           type="button"
           onClick={() => onSelect(city)}
-          className="rounded-full border border-slate-800 bg-slate-900/70 px-3 py-1 text-slate-200 hover:bg-slate-800 transition-colors"
+          className="rounded-full border surface-border surface-soft px-3 py-1 text-xs text-slate-600 hover:opacity-80 transition-colors"
         >
           {city}
         </button>

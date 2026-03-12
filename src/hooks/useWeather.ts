@@ -1,6 +1,19 @@
 import { useCallback, useState } from "react";
-import type { CurrentWeather, HourlyForecast, TemperatureUnit } from "../types/weather";
-import { fetchCurrentWeather, fetchHourlyForecast } from "../services/weatherApi";
+import type {
+  AirQuality,
+  CurrentWeather,
+  HourlyForecast,
+  NearbyCities,
+  TemperatureUnit,
+  UvIndex,
+} from "../types/weather";
+import {
+  fetchAirQuality,
+  fetchCurrentWeather,
+  fetchHourlyForecast,
+  fetchNearbyCities,
+  fetchUvIndex,
+} from "../services/weatherApi";
 
 interface UseWeatherOptions {
   initialCity?: string;
@@ -13,21 +26,31 @@ interface UseWeatherResult {
   error: string | null;
   unit: TemperatureUnit;
   hourly: HourlyForecast | null;
+  airQuality: AirQuality | null;
+  uv: UvIndex | null;
+  nearby: NearbyCities | null;
   searchCity: (city: string) => Promise<void>;
   refresh: () => Promise<void>;
-  setUnit: (unit: TemperatureUnit) => void;
+  setUnit: (unit: TemperatureUnit) => Promise<void>;
 }
 
 export function useWeather(options: UseWeatherOptions = {}): UseWeatherResult {
   const [weather, setWeather] = useState<CurrentWeather | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [unit, setUnit] = useState<TemperatureUnit>(options.initialUnit ?? "metric");
-  const [lastCity, setLastCity] = useState<string | undefined>(options.initialCity);
+  const [unit, setUnit] = useState<TemperatureUnit>(
+    options.initialUnit ?? "metric",
+  );
+  const [lastCity, setLastCity] = useState<string | undefined>(
+    options.initialCity,
+  );
   const [hourly, setHourly] = useState<HourlyForecast | null>(null);
+  const [airQuality, setAirQuality] = useState<AirQuality | null>(null);
+  const [uv, setUv] = useState<UvIndex | null>(null);
+  const [nearby, setNearby] = useState<NearbyCities | null>(null);
 
   const load = useCallback(
-    async (city?: string) => {
+    async (city?: string, overrideUnit?: TemperatureUnit) => {
       const queryCity = city ?? lastCity;
       if (!queryCity) return;
 
@@ -35,16 +58,40 @@ export function useWeather(options: UseWeatherOptions = {}): UseWeatherResult {
         setIsLoading(true);
         setError(null);
 
+        const activeUnit = overrideUnit ?? unit;
+
         const [current, forecast] = await Promise.all([
-          fetchCurrentWeather({ city: queryCity, units: unit }),
-          fetchHourlyForecast({ city: queryCity, units: unit }),
+          fetchCurrentWeather({ city: queryCity, units: activeUnit }),
+          fetchHourlyForecast({ city: queryCity, units: activeUnit }),
         ]);
         setWeather(current);
         setHourly(forecast);
+
+        if (current.lat != null && current.lon != null) {
+          const [aqResult, uvResult, nearbyResult] = await Promise.allSettled([
+            fetchAirQuality(current.lat, current.lon),
+            fetchUvIndex(current.lat, current.lon),
+            fetchNearbyCities(current.lat, current.lon, activeUnit),
+          ]);
+
+          setAirQuality(
+            aqResult.status === "fulfilled" ? aqResult.value : null,
+          );
+          setUv(uvResult.status === "fulfilled" ? uvResult.value : null);
+          setNearby(
+            nearbyResult.status === "fulfilled" ? nearbyResult.value : null,
+          );
+        } else {
+          setAirQuality(null);
+          setUv(null);
+          setNearby(null);
+        }
         setLastCity(queryCity);
       } catch (err) {
         const message =
-          err instanceof Error ? err.message : "Something went wrong while fetching weather.";
+          err instanceof Error
+            ? err.message
+            : "Something went wrong while fetching weather.";
         setError(message);
       } finally {
         setIsLoading(false);
@@ -65,15 +112,25 @@ export function useWeather(options: UseWeatherOptions = {}): UseWeatherResult {
     await load();
   }, [load]);
 
+  const changeUnit = useCallback(
+    async (next: TemperatureUnit) => {
+      setUnit(next);
+      await load(undefined, next);
+    },
+    [load],
+  );
+
   return {
     weather,
     isLoading,
     error,
     unit,
     hourly,
+    airQuality,
+    uv,
+    nearby,
     searchCity,
     refresh,
-    setUnit,
+    setUnit: changeUnit,
   };
 }
-

@@ -33,12 +33,12 @@ const HourlyForecastStrip = ({ forecast, unit }: HourlyForecastStripProps) => {
         {forecast.points.map((point) => (
           <div
             key={point.timestamp}
-            className="min-w-[80px] rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-center text-xs text-slate-300"
+            className="min-w-[80px] rounded-xl border surface-border surface-soft px-3 py-2 text-center text-xs"
           >
-            <p className="text-[11px] text-slate-400">{formatHour(point.timestamp)}</p>
-            <p className="mt-1 text-sm font-semibold text-slate-50">
+            <p className="text-[11px] text-slate-500">{formatHour(point.timestamp)}</p>
+            <p className="mt-1 text-sm font-semibold">
               {Math.round(point.temperature)}
-              <span className="ml-0.5 text-[11px] text-slate-400">{symbol}</span>
+              <span className="ml-0.5 text-[11px] text-slate-500">{symbol}</span>
             </p>
           </div>
         ))}

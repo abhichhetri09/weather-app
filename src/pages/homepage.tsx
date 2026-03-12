@@ -8,20 +8,25 @@ import { ErrorMessage } from "../components/ErrorMessage";
 import { HourlyForecastStrip } from "../components/HourlyForecastStrip";
 import { FavoritesBar } from "../components/FavoritesBar";
 import { UnitToggle } from "../components/UnitToggle";
+import { MapView } from "../components/MapView";
+import { NearbyCities as NearbyCitiesList } from "../components/NearbyCities";
+import { AirHealthCards } from "../components/AirHealthCards";
+import { NamedLocations } from "../components/NamedLocations";
 
 const Homepage = () => {
-  const { weather, isLoading, error, unit, hourly, searchCity, refresh, setUnit } = useWeather({
+  const { weather, isLoading, error, unit, hourly, airQuality, uv, nearby, searchCity, setUnit } =
+    useWeather({
     initialCity: "helsinki",
     initialUnit: "metric",
-  });
+    });
   const [favorites, setFavorites] = useLocalStorage<string[]>("clima:favorites", []);
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] w-full items-center justify-center py-8 text-slate-50">
+    <div className="flex min-h-[calc(100vh-3.5rem)] w-full items-center justify-center py-8">
       <div className="flex w-full flex-col gap-6">
         <header className="flex w-full flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-50">
+            <h1 className="text-2xl font-semibold tracking-tight">
               Simple, modern weather.
             </h1>
             <p className="max-w-md text-sm text-slate-400">
@@ -32,8 +37,7 @@ const Homepage = () => {
           <UnitToggle
             value={unit}
             onChange={async (next) => {
-              setUnit(next);
-              await refresh();
+              await setUnit(next);
             }}
           />
         </header>
@@ -72,6 +76,11 @@ const Homepage = () => {
               await searchCity(city);
             }}
           />
+          <NamedLocations
+            onSelect={async (city) => {
+              await searchCity(city);
+            }}
+          />
         </div>
 
         {isLoading && <LoadingSpinner />}
@@ -81,7 +90,20 @@ const Homepage = () => {
         {!isLoading && !error && weather && (
           <>
             <CurrentWeatherCard weather={weather} unit={unit} />
+            <AirHealthCards airQuality={airQuality} uv={uv} />
             {hourly && <HourlyForecastStrip forecast={hourly} unit={unit} />}
+            <div className="mt-4 grid gap-4 md:grid-cols-[minmax(0,2.1fr)_minmax(0,1.2fr)]">
+              <MapView weather={weather} />
+              {nearby && (
+                <NearbyCitiesList
+                  nearby={nearby}
+                  unit={unit}
+                  onSelect={async (city) => {
+                    await searchCity(city);
+                  }}
+                />
+              )}
+            </div>
           </>
         )}
 

@@ -7,12 +7,14 @@ interface UnitToggleProps {
 
 const UnitToggle = ({ value, onChange }: UnitToggleProps) => {
   return (
-    <div className="inline-flex items-center rounded-full border border-slate-800 bg-slate-900/60 p-0.5 text-[11px] text-slate-300">
+    <div className="inline-flex items-center rounded-full border surface-border surface-soft p-0.5 text-[11px] text-slate-500">
       <button
         type="button"
         onClick={() => onChange("metric")}
         className={`px-2 py-1 rounded-full ${
-          value === "metric" ? "bg-slate-100 text-slate-900" : "hover:text-slate-100"
+          value === "metric"
+            ? "bg-sky-500 text-white"
+            : "text-slate-500 hover:text-slate-700"
         }`}
       >
         °C
@@ -21,7 +23,9 @@ const UnitToggle = ({ value, onChange }: UnitToggleProps) => {
         type="button"
         onClick={() => onChange("imperial")}
         className={`px-2 py-1 rounded-full ${
-          value === "imperial" ? "bg-slate-100 text-slate-900" : "hover:text-slate-100"
+          value === "imperial"
+            ? "bg-sky-500 text-white"
+            : "text-slate-500 hover:text-slate-700"
         }`}
       >
         °F

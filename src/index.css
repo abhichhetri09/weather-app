@@ -1,10 +1,45 @@
 @import "tailwindcss";
 
+:root {
+  color-scheme: dark;
+  --app-bg: #020617; /* slate-950 */
+  --app-fg: #e5e7eb; /* slate-200 */
+  --surface: #020617;
+  --surface-soft: #020617;
+  --surface-border: #1f2937; /* slate-800 */
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --app-bg: #f9fafb; /* slate-50 */
+  --app-fg: #020617; /* slate-950 */
+  --surface: #ffffff;
+  --surface-soft: #f3f4f6; /* slate-100 */
+  --surface-border: #e5e7eb; /* slate-200 */
+}
+
+.surface {
+  background-color: var(--surface);
+}
+
+.surface-soft {
+  background-color: var(--surface-soft);
+}
+
+.surface-border {
+  border-color: var(--surface-border);
+}
+
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #020617; /* slate-950 */
-  color: #e5e7eb; /* slate-200 */
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  background-color: var(--app-bg);
+  color: var(--app-fg);
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
+    sans-serif;
 }
