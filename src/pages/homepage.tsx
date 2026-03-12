@@ -14,12 +14,24 @@ import { AirHealthCards } from "../components/AirHealthCards";
 import { NamedLocations } from "../components/NamedLocations";
 
 const Homepage = () => {
-  const { weather, isLoading, error, unit, hourly, airQuality, nearby, searchCity, setUnit } =
-    useWeather({
+  const {
+    weather,
+    isLoading,
+    error,
+    unit,
+    hourly,
+    airQuality,
+    nearby,
+    searchCity,
+    setUnit,
+  } = useWeather({
     initialCity: "helsinki",
     initialUnit: "metric",
-    });
-  const [favorites, setFavorites] = useLocalStorage<string[]>("clima:favorites", []);
+  });
+  const [favorites, setFavorites] = useLocalStorage<string[]>(
+    "clima:favorites",
+    [],
+  );
 
   return (
     <div className="flex min-h-[calc(100vh-3.5rem)] w-full items-center justify-center py-8">
@@ -30,8 +42,8 @@ const Homepage = () => {
               Simple, modern weather.
             </h1>
             <p className="max-w-md text-sm text-slate-400">
-              Search for any city to see the current conditions at a glance. Clean, focused, and
-              built for everyday use.
+              Search for any city to see the current conditions at a glance.
+              Clean, focused, and built for everyday use.
             </p>
           </div>
           <UnitToggle
@@ -48,7 +60,12 @@ const Homepage = () => {
               onSearch={async (city) => {
                 await searchCity(city);
                 setFavorites((prev) => {
-                  const next = [city, ...prev.filter((c) => c.toLowerCase() !== city.toLowerCase())];
+                  const next = [
+                    city,
+                    ...prev.filter(
+                      (c) => c.toLowerCase() !== city.toLowerCase(),
+                    ),
+                  ];
                   return next.slice(0, 5);
                 });
               }}
@@ -89,11 +106,14 @@ const Homepage = () => {
 
         {!isLoading && !error && weather && (
           <>
-            <CurrentWeatherCard weather={weather} unit={unit} />
-            <AirHealthCards airQuality={airQuality} />
-            {hourly && <HourlyForecastStrip forecast={hourly} unit={unit} />}
-            <div className="mt-4 grid gap-4 md:grid-cols-[minmax(0,2.1fr)_minmax(0,1.2fr)]">
+            <div className="flex flex-row gap-4 justify-between">
+              <CurrentWeatherCard weather={weather} unit={unit} />
               <MapView weather={weather} />
+            </div>
+
+            {hourly && <HourlyForecastStrip forecast={hourly} unit={unit} />}
+            <AirHealthCards airQuality={airQuality} />
+            <div className="grid gap-4 md:grid-cols-[minmax(0,2.1fr)_minmax(0,1.2fr)]">
               {nearby && (
                 <NearbyCitiesList
                   nearby={nearby}

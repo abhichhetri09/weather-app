@@ -18,7 +18,7 @@ const MapView = ({ weather }: MapViewProps) => {
   const viewUrl = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${zoom}/${lat}/${lon}`;
 
   return (
-    <section className="mt-6 grid gap-4 md:grid-cols-[minmax(0,2fr)_minmax(0,1.1fr)]">
+    <section className="w-full">
       <div className="rounded-2xl border surface-border surface p-3">
         <div className="flex items-center justify-between pb-2">
           <h3 className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
@@ -47,4 +47,3 @@ const MapView = ({ weather }: MapViewProps) => {
 };
 
 export { MapView };
-
