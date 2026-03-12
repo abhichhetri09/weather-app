@@ -5,14 +5,12 @@ import type {
   HourlyForecast,
   NearbyCities,
   TemperatureUnit,
-  UvIndex,
 } from "../types/weather";
 import {
   fetchAirQuality,
   fetchCurrentWeather,
   fetchHourlyForecast,
   fetchNearbyCities,
-  fetchUvIndex,
 } from "../services/weatherApi";
 
 interface UseWeatherOptions {
@@ -27,7 +25,6 @@ interface UseWeatherResult {
   unit: TemperatureUnit;
   hourly: HourlyForecast | null;
   airQuality: AirQuality | null;
-  uv: UvIndex | null;
   nearby: NearbyCities | null;
   searchCity: (city: string) => Promise<void>;
   refresh: () => Promise<void>;
@@ -46,7 +43,6 @@ export function useWeather(options: UseWeatherOptions = {}): UseWeatherResult {
   );
   const [hourly, setHourly] = useState<HourlyForecast | null>(null);
   const [airQuality, setAirQuality] = useState<AirQuality | null>(null);
-  const [uv, setUv] = useState<UvIndex | null>(null);
   const [nearby, setNearby] = useState<NearbyCities | null>(null);
 
   const load = useCallback(
@@ -68,22 +64,16 @@ export function useWeather(options: UseWeatherOptions = {}): UseWeatherResult {
         setHourly(forecast);
 
         if (current.lat != null && current.lon != null) {
-          const [aqResult, uvResult, nearbyResult] = await Promise.allSettled([
+          const [aqResult, nearbyResult] = await Promise.allSettled([
             fetchAirQuality(current.lat, current.lon),
-            fetchUvIndex(current.lat, current.lon),
             fetchNearbyCities(current.lat, current.lon, activeUnit),
           ]);
-
-          setAirQuality(
-            aqResult.status === "fulfilled" ? aqResult.value : null,
-          );
-          setUv(uvResult.status === "fulfilled" ? uvResult.value : null);
+          setAirQuality(aqResult.status === "fulfilled" ? aqResult.value : null);
           setNearby(
             nearbyResult.status === "fulfilled" ? nearbyResult.value : null,
           );
         } else {
           setAirQuality(null);
-          setUv(null);
           setNearby(null);
         }
         setLastCity(queryCity);
@@ -127,7 +117,6 @@ export function useWeather(options: UseWeatherOptions = {}): UseWeatherResult {
     unit,
     hourly,
     airQuality,
-    uv,
     nearby,
     searchCity,
     refresh,

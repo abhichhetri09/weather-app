@@ -14,7 +14,7 @@ import { AirHealthCards } from "../components/AirHealthCards";
 import { NamedLocations } from "../components/NamedLocations";
 
 const Homepage = () => {
-  const { weather, isLoading, error, unit, hourly, airQuality, uv, nearby, searchCity, setUnit } =
+  const { weather, isLoading, error, unit, hourly, airQuality, nearby, searchCity, setUnit } =
     useWeather({
     initialCity: "helsinki",
     initialUnit: "metric",
@@ -90,7 +90,7 @@ const Homepage = () => {
         {!isLoading && !error && weather && (
           <>
             <CurrentWeatherCard weather={weather} unit={unit} />
-            <AirHealthCards airQuality={airQuality} uv={uv} />
+            <AirHealthCards airQuality={airQuality} />
             {hourly && <HourlyForecastStrip forecast={hourly} unit={unit} />}
             <div className="mt-4 grid gap-4 md:grid-cols-[minmax(0,2.1fr)_minmax(0,1.2fr)]">
               <MapView weather={weather} />

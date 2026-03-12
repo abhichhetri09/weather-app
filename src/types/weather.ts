@@ -56,12 +56,6 @@ export interface AirQuality {
   advice: string;
 }
 
-export interface UvIndex {
-  value: number;
-  category: string;
-  advice: string;
-}
-
 export interface NearbyCitySummary {
   id: number;
   name: string;

@@ -5,7 +5,6 @@ import type {
   HourlyForecastPoint,
   NearbyCities,
   NearbyCitySummary,
-  UvIndex,
   WeatherQuery,
   TemperatureUnit,
 } from "../types/weather";
@@ -123,48 +122,6 @@ export async function fetchAirQuality(lat: number, lon: number): Promise<AirQual
   }
 
   return { aqi, description, advice };
-}
-
-export async function fetchUvIndex(lat: number, lon: number): Promise<UvIndex> {
-  if (!API_KEY) {
-    throw new Error(
-      "Missing VITE_WEATHER_API_KEY. Please add it to your .env file at the project root.",
-    );
-  }
-
-  // OpenWeather's One Call 3.0 embeds UV index; for simplicity we use current weather's UV-like index if available.
-  const response = await fetch(
-    `${API_BASE_URL}/onecall?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(
-      lon,
-    )}&exclude=minutely,hourly,daily,alerts&appid=${API_KEY}`,
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch UV index data.");
-  }
-
-  const data = await response.json();
-  const value: number = data.current?.uvi ?? 0;
-
-  let category = "Low";
-  let advice = "Low risk from UV rays. Basic sun protection is sufficient.";
-
-  if (value >= 3 && value < 6) {
-    category = "Moderate";
-    advice = "Use sunscreen and sunglasses if you are outside for extended periods.";
-  } else if (value >= 6 && value < 8) {
-    category = "High";
-    advice = "Reduce time in the sun between 10 a.m. and 4 p.m., and use SPF 30+.";
-  } else if (value >= 8 && value < 11) {
-    category = "Very high";
-    advice =
-      "Extra protection is needed. Stay in shade when possible and wear a hat and sunglasses.";
-  } else if (value >= 11) {
-    category = "Extreme";
-    advice = "Avoid the sun if possible. Unprotected skin can burn in minutes.";
-  }
-
-  return { value, category, advice };
 }
 
 export async function fetchNearbyCities(
