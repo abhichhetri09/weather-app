@@ -5,7 +5,7 @@ const NavBar = () => {
   const navItems = [
     {
       label: "Home",
-      to: "/",
+      to: "/home",
     },
     {
       label: "About",
@@ -14,7 +14,7 @@ const NavBar = () => {
   ];
   return (
     <nav className="flex w-full items-center justify-between gap-4">
-      <Link to="/" className="text-sm font-semibold tracking-tight">
+      <Link to="/home" className="text-sm font-semibold tracking-tight">
         Clima
         <span className="ml-1 rounded-full bg-sky-500/10 px-2 py-0.5 text-[10px] font-medium text-sky-300">
           beta
