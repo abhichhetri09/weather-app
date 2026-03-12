@@ -18,8 +18,8 @@ const MapView = ({ weather }: MapViewProps) => {
   const viewUrl = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${zoom}/${lat}/${lon}`;
 
   return (
-    <section className="w-full">
-      <div className="rounded-2xl border surface-border surface p-3">
+    <section className="w-full h-full">
+      <div className="h-full rounded-2xl border surface-border surface p-3 flex flex-col">
         <div className="flex items-center justify-between pb-2">
           <h3 className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
             Map view
@@ -33,11 +33,11 @@ const MapView = ({ weather }: MapViewProps) => {
             Open in Maps
           </a>
         </div>
-        <div className="overflow-hidden rounded-xl border surface-border surface-soft">
+        <div className="mt-1 flex-1 overflow-hidden rounded-xl border surface-border surface-soft">
           <iframe
             title="Map"
             src={embedUrl}
-            className="h-48 w-full"
+            className="h-full w-full"
             loading="lazy"
           />
         </div>

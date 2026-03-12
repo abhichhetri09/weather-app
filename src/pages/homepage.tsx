@@ -136,16 +136,24 @@ const Homepage = () => {
         {/* Content area: always render layout, swap in skeletons when needed */}
         {!error && (
           <>
-            <div className="flex flex-row gap-4 justify-between">
+            <div className="flex flex-row gap-4 justify-between items-stretch w-full">
               {weather ? (
                 <>
-                  <CurrentWeatherCard weather={weather} unit={unit} />
-                  <MapView weather={weather} />
+                  <div className="flex-1 flex">
+                    <CurrentWeatherCard weather={weather} unit={unit} />
+                  </div>
+                  <div className="flex-1 flex">
+                    <MapView weather={weather} />
+                  </div>
                 </>
               ) : (
                 <>
-                  <SkeletonCurrentWeatherCard />
-                  <SkeletonSidebarCard />
+                  <div className="flex-1 flex">
+                    <SkeletonCurrentWeatherCard />
+                  </div>
+                  <div className="flex-1 flex">
+                    <SkeletonSidebarCard />
+                  </div>
                 </>
               )}
             </div>

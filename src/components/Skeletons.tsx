@@ -49,7 +49,7 @@ const SkeletonHourlyStrip = () => (
 );
 
 const SkeletonSidebarCard = () => (
-  <div className="rounded-2xl border surface-border surface-soft p-3 animate-pulse space-y-3">
+  <div className="h-full rounded-2xl border surface-border surface-soft p-3 animate-pulse space-y-3 flex flex-col">
     <div className="h-3 w-24 rounded bg-slate-300/40" />
     {[0, 1, 2].map((key) => (
       <div key={key} className="flex items-center justify-between gap-2">
