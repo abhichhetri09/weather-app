@@ -12,18 +12,25 @@ const NavBar = () => {
     },
   ];
   return (
-    <nav>
-      <Link to="/"></Link>
-      <div className="flex gap-4 p-2 border bg-slate-900">
+    <nav className="flex w-full items-center justify-between">
+      <Link to="/" className="text-sm font-semibold tracking-tight text-slate-50">
+        Clima
+        <span className="ml-1 rounded-full bg-sky-500/10 px-2 py-0.5 text-[10px] font-medium text-sky-300">
+          beta
+        </span>
+      </Link>
+      <ul className="flex items-center gap-4 text-xs font-medium text-slate-300">
         {navItems.map((item) => (
-          <div
-            key={item.to}
-            className="flex items-center justify-center border border-slate-300 rounded-md p-2 hover:bg-slate-300 hover:text-slate-900 transition-all duration-300"
-          >
-            <Link to={item.to}>{item.label}</Link>
-          </div>
+          <li key={item.to}>
+            <Link
+              to={item.to}
+              className="rounded-full px-3 py-1 hover:bg-slate-800 hover:text-slate-100 transition-colors"
+            >
+              {item.label}
+            </Link>
+          </li>
         ))}
-      </div>
+      </ul>
     </nav>
   );
 };
