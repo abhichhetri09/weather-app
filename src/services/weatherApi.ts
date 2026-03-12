@@ -66,6 +66,8 @@ export async function fetchCurrentWeather(query: WeatherQuery): Promise<CurrentW
     humidity: data.main?.humidity,
     pressure: data.main?.pressure,
     windSpeed: data.wind?.speed,
+    windDeg: data.wind?.deg,
+    windGust: data.wind?.gust,
     visibility: data.visibility,
     cloudiness: data.clouds?.all,
     sunrise: data.sys?.sunrise,

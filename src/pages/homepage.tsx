@@ -12,6 +12,11 @@ import { MapView } from "../components/MapView";
 import { NearbyCities as NearbyCitiesList } from "../components/NearbyCities";
 import { AirHealthCards } from "../components/AirHealthCards";
 import { NamedLocations } from "../components/NamedLocations";
+import {
+  SkeletonCurrentWeatherCard,
+  SkeletonHourlyStrip,
+  SkeletonSidebarCard,
+} from "../components/Skeletons";
 
 const Homepage = () => {
   const {
@@ -23,9 +28,9 @@ const Homepage = () => {
     airQuality,
     nearby,
     searchCity,
+    refresh,
     setUnit,
   } = useWeather({
-    initialCity: "helsinki",
     initialUnit: "metric",
   });
   const [favorites, setFavorites] = useLocalStorage<string[]>(
@@ -46,12 +51,36 @@ const Homepage = () => {
               Clean, focused, and built for everyday use.
             </p>
           </div>
-          <UnitToggle
-            value={unit}
-            onChange={async (next) => {
-              await setUnit(next);
-            }}
-          />
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={async () => {
+                await refresh();
+              }}
+              disabled={isLoading}
+              className="inline-flex items-center gap-1 rounded-full border surface-border surface-soft px-3 py-1.5 text-[11px] font-medium text-slate-600 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <span className="inline-block">↻</span>
+              <span>Refresh</span>
+            </button>
+            <button
+              type="button"
+              onClick={async () => {
+                await searchCity("helsinki");
+              }}
+              disabled={isLoading}
+              className="inline-flex items-center gap-1 rounded-full border surface-border surface-soft px-3 py-1.5 text-[11px] font-medium text-slate-600 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <span className="inline-block">⟳</span>
+              <span>Reset location</span>
+            </button>
+            <UnitToggle
+              value={unit}
+              onChange={async (next) => {
+                await setUnit(next);
+              }}
+            />
+          </div>
         </header>
 
         <div className="flex w-full flex-col gap-3">
@@ -104,17 +133,33 @@ const Homepage = () => {
 
         {error && !isLoading && <ErrorMessage message={error} />}
 
-        {!isLoading && !error && weather && (
+        {/* Content area: always render layout, swap in skeletons when needed */}
+        {!error && (
           <>
             <div className="flex flex-row gap-4 justify-between">
-              <CurrentWeatherCard weather={weather} unit={unit} />
-              <MapView weather={weather} />
+              {weather ? (
+                <>
+                  <CurrentWeatherCard weather={weather} unit={unit} />
+                  <MapView weather={weather} />
+                </>
+              ) : (
+                <>
+                  <SkeletonCurrentWeatherCard />
+                  <SkeletonSidebarCard />
+                </>
+              )}
             </div>
 
-            {hourly && <HourlyForecastStrip forecast={hourly} unit={unit} />}
-            <AirHealthCards airQuality={airQuality} />
+            {hourly ? (
+              <HourlyForecastStrip forecast={hourly} unit={unit} />
+            ) : (
+              <SkeletonHourlyStrip />
+            )}
+
+            {airQuality && <AirHealthCards airQuality={airQuality} />}
+
             <div className="grid gap-4 md:grid-cols-[minmax(0,2.1fr)_minmax(0,1.2fr)]">
-              {nearby && (
+              {nearby ? (
                 <NearbyCitiesList
                   nearby={nearby}
                   unit={unit}
@@ -122,15 +167,11 @@ const Homepage = () => {
                     await searchCity(city);
                   }}
                 />
+              ) : (
+                <SkeletonSidebarCard />
               )}
             </div>
           </>
-        )}
-
-        {!isLoading && !error && !weather && (
-          <p className="mt-4 text-sm text-slate-500">
-            Start by searching for a city to see the current weather.
-          </p>
         )}
       </div>
     </div>

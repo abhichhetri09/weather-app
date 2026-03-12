@@ -17,9 +17,21 @@ const unitSymbol: Record<TemperatureUnit, string> = {
   imperial: "°F",
 };
 
+function iconUrl(code: string) {
+  return `https://openweathermap.org/img/wn/${code}@2x.png`;
+}
+
+function formatWindDirection(deg?: number): string {
+  if (deg == null || Number.isNaN(deg)) return "–";
+  const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+  const index = Math.round((deg % 360) / 45) % 8;
+  return directions[index];
+}
+
 const CurrentWeatherCard = ({ weather, unit }: CurrentWeatherCardProps) => {
   const symbol = unitSymbol[unit];
   const comfort = computeComfortIndex(weather, unit);
+  const windDirection = formatWindDirection(weather.windDeg);
 
   return (
     <section className="w-full max-w-2xl rounded-2xl border surface-border surface p-5 shadow-sm shadow-slate-950/10 backdrop-blur">
@@ -42,11 +54,19 @@ const CurrentWeatherCard = ({ weather, unit }: CurrentWeatherCardProps) => {
         </div>
 
         <div className="flex flex-col items-end">
-          <div className="flex items-baseline gap-1">
-            <p className="text-4xl font-semibold leading-none">
-              {Math.round(weather.temperature)}
-            </p>
-            <span className="text-sm text-slate-400">{symbol}</span>
+          <div className="flex items-center gap-3">
+            <img
+              src={iconUrl(weather.iconCode)}
+              alt={weather.description}
+              className="h-10 w-10"
+              loading="lazy"
+            />
+            <div className="flex items-baseline gap-1">
+              <p className="text-4xl font-semibold leading-none">
+                {Math.round(weather.temperature)}
+              </p>
+              <span className="text-sm text-slate-400">{symbol}</span>
+            </div>
           </div>
           <p className="mt-1 text-[11px] text-slate-400">
             Feels like {Math.round(weather.feelsLike)}
@@ -68,15 +88,29 @@ const CurrentWeatherCard = ({ weather, unit }: CurrentWeatherCardProps) => {
           <dd className="mt-1 text-sm font-semibold">
             {Math.round(weather.humidity)}%
           </dd>
-          <dd className="mt-0.5 text-[11px] text-slate-500">{describeHumidity(weather.humidity)}</dd>
+          <dd className="mt-0.5 text-[11px] text-slate-500">
+            {describeHumidity(weather.humidity)}
+          </dd>
         </div>
 
         <div className="rounded-xl border surface-border surface-soft px-3 py-2.5">
           <dt className="text-[11px] text-slate-400">Wind</dt>
-          <dd className="mt-1 text-sm font-semibold">
+          <dd className="mt-1 text-sm font-semibold flex items-center justify-center gap-1">
+            <span
+              className="inline-block h-3 w-3 rotate-90"
+              style={{ transform: `rotate(${(weather.windDeg ?? 0) + 90}deg)` }}
+              aria-hidden="true"
+            >
+              ▲
+            </span>
             {Math.round(weather.windSpeed)} km/h
+            <span className="text-[11px] text-slate-500">
+              · {windDirection}
+            </span>
           </dd>
-          <dd className="mt-0.5 text-[11px] text-slate-500">{describeWind(weather.windSpeed)}</dd>
+          <dd className="mt-0.5 text-[11px] text-slate-500">
+            {describeWind(weather.windSpeed)}
+          </dd>
         </div>
 
         <div className="rounded-xl border surface-border surface-soft px-3 py-2.5">
@@ -104,4 +138,3 @@ const CurrentWeatherCard = ({ weather, unit }: CurrentWeatherCardProps) => {
 };
 
 export { CurrentWeatherCard };
-

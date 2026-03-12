@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type {
   AirQuality,
   CurrentWeather,
@@ -109,6 +109,12 @@ export function useWeather(options: UseWeatherOptions = {}): UseWeatherResult {
     },
     [load],
   );
+
+  useEffect(() => {
+    if (options.initialCity) {
+      void load(options.initialCity);
+    }
+  }, [load, options.initialCity]);
 
   return {
     weather,
