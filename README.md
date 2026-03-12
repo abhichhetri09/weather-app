@@ -1,73 +1,127 @@
-# React + TypeScript + Vite
+# Clima – Modern Weather Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Clima is a clean, modern weather dashboard built with React, TypeScript, Vite, Tailwind (v4) and the OpenWeather API.  
+It focuses on a simple UX: quick city search, clear current conditions, and useful insights at a glance.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **City search** with debounced-style input
+- **Current weather card**
+  - Temperature, feels like, high/low
+  - Humidity, wind, pressure, visibility
+  - Human‑readable comfort insights (e.g. “Hot and humid”)
+- **Hourly forecast strip** – next few hours with temperatures
+- **Air quality** card – AQI category + health advice
+- **Nearby cities** – quick‑glance temps and jump navigation
+- **Favorites & named locations**
+  - Recent cities (localStorage)
+  - Quick “Home” / “Work” style shortcuts
+- **Unit toggle** – °C / °F
+- **Theme toggle** – Light / Dark / System
+- **Responsive layout** – works well on desktop and mobile
+- **Map view** – embedded OpenStreetMap centered on the current city
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React 19 + TypeScript + React Router
+- **Build**: Vite
+- **Styling**: Tailwind CSS v4 + a small theme system (CSS variables)
+- **API**: [OpenWeather](https://openweathermap.org/api)
+- **Deployment**: GitHub Pages
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 1. Clone & install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/abhichhetri09/weather-app.git
+cd weather-app
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Configure environment
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+In the project root, create a `.env` file:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+VITE_WEATHER_API_KEY=your_openweather_key_here
+VITE_WEATHER_API_URL=https://api.openweathermap.org/data/2.5
 ```
+
+> Note: This is a client‑side app. Your key is embedded in the built bundle; use a key with limited permissions/quotas.
+
+### 3. Run locally
+
+```bash
+npm run dev
+```
+
+Then open:
+
+```text
+http://localhost:5173/
+```
+
+## Deployment (GitHub Pages)
+
+This project is configured to deploy to  
+`https://abhichhetri09.github.io/weather-app/`.
+
+1. Ensure `vite.config.ts` has:
+
+   ```ts
+   import { defineConfig } from "vite";
+   import tailwindcss from "@tailwindcss/vite";
+
+   export default defineConfig({
+     base: "/weather-app/",
+     plugins: [tailwindcss()],
+   });
+   ```
+
+2. Build & deploy (using `gh-pages`):
+
+   ```bash
+   npm run build
+   npm run deploy
+   ```
+
+3. In your GitHub repo settings (`Settings → Pages`):
+
+   - **Source**: `Deploy from a branch`
+   - **Branch**: `gh-pages`, folder `/ (root)`
+
+Updates are just:
+
+```bash
+npm run deploy
+```
+
+## Project Structure (key files)
+
+- `src/main.tsx` – React entrypoint with `BrowserRouter` and `basename`
+- `src/App.tsx` – Routes
+- `src/pages/homepage.tsx` – Main dashboard layout
+- `src/hooks/useWeather.ts` – Fetches current, hourly, AQ, nearby cities
+- `src/services/weatherApi.ts` – OpenWeather API wrappers
+- `src/components/`
+  - `CurrentWeatherCard.tsx`
+  - `SearchBar.tsx`, `LocationButton.tsx`
+  - `HourlyForecastStrip.tsx`
+  - `AirHealthCards.tsx`
+  - `NearbyCities.tsx`, `MapView.tsx`
+  - `FavoritesBar.tsx`, `NamedLocations.tsx`
+  - `UnitToggle.tsx`, `ThemeToggle.tsx`, `NavBar.tsx`, `Layout.tsx`
+- `src/utils/weatherInsights.ts` – Human‑readable weather insights
+- `src/index.css` – Tailwind import + light/dark theme variables
+
+## Future Improvements
+
+- Daily forecast grid (3–7 days)
+- Simple charts for temperature trends
+- Better error/empty states and loading skeletons
+
+---
+
+Feel free to fork and adapt Clima for your own portfolio or as a starter for richer weather‑based projects.
+
