@@ -19,12 +19,17 @@ function formatHour(timestamp: number, timezoneOffsetSeconds?: number) {
   });
 }
 
+function formatDate(timestamp: number): string {
+  return new Date(timestamp * 1000).toDateString();
+}
+
 function iconUrl(code: string) {
   return `https://openweathermap.org/img/wn/${code}@2x.png`;
 }
 
 const HourlyForecastStrip = ({ forecast, unit }: HourlyForecastStripProps) => {
   const symbol = unitSymbol[unit];
+  console.log(forecast);
 
   if (!forecast.points.length) return null;
 
@@ -41,6 +46,9 @@ const HourlyForecastStrip = ({ forecast, unit }: HourlyForecastStripProps) => {
           >
             <p className="text-[11px] text-slate-500">
               {formatHour(point.timestamp)}
+            </p>
+            <p className="text-[11px] text-slate-500">
+              {formatDate(point.timestamp)}
             </p>
             <div className="mt-1 flex items-center justify-center">
               <img
